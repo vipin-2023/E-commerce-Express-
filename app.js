@@ -10,6 +10,7 @@ var hbs = require("express-handlebars");
 
 var app = express();
 var fileUpload=require("express-fileupload")
+var db=require('./config/connection')
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -30,6 +31,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(fileUpload());
+app.connect((err)=>{
+  if(err){
+    console.log(err);
+    console.log("Db Connection Error");
+  }
+  
+  else {console.log("Db Connection Success") }
+})
+
+
 app.use("/", userRouter);
 app.use("/admin", adminRouter);
 
