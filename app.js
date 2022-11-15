@@ -31,7 +31,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(fileUpload());
-app.connect((err)=>{
+db.connect((err)=>{
   if(err){
     console.log(err);
     console.log("Db Connection Error");
