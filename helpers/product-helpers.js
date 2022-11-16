@@ -1,9 +1,14 @@
 var db = require("../config/connection");
-
+var collection = require("../config/collections");
 module.exports = {
-  addProduct: (product, callback) => {
+  addProduct: (request, callback) => {
+    let product=request.body
+    var type=request.files.image.mimetype.split('/')
+    console.log(type[1])
+     product.type=type[1]
+     
     db.get()
-      .collection("product")
+      .collection(collection.PRODUCT_COLLECTION)
       .insertOne(product)
       .then((data) => {
         console.log("product-Helpers.....");
@@ -11,6 +16,12 @@ module.exports = {
         console.log(".....");
         callback(data);
       });
+  },
+  getAllProducts: () => {
+    return new Promise(async(resolve, reject) => {
+      let products = await db.get().collection(collection.PRODUCT_COLLECTION).find().toArray();
+      resolve(products)
+    });
   },
   imageSaving: (image, result, callback) => {
     try {

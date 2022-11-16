@@ -10,7 +10,7 @@
         </div>
 
 
-
+{{#if products}}
 
         <table class="table mt-4">
             <thead class="bg-success">
@@ -26,14 +26,15 @@
                 {{#each products}}
                 <tr>
                     <th scope="row">{{@index }}</th>
-                    <td>{{this.name}}</td>
-                    <td>{{this.category}}</td>
-                    <td><img style="width: 50px;height:50px" src="{{this.imageUrl}}" alt=""></td>
-                    <td>{{this.price}}</td>
+                    <td>{{this.Name}}</td>
+                    <td>{{this.Category}}</td>
+                    <td><img style="width: 50px;height:50px" src="/product-images/{{this._id}}.{{this.type}}" alt=""></td>
+                    <td>{{this.Price}}</td>
                 </tr>
                 {{/each}}
 
             </tbody>
         </table>
+        {{/if}}
     </section>
 </div>
