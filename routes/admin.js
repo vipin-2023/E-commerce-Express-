@@ -21,7 +21,7 @@ router.post("/add-product", (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        res.send("product added");
+        res.render("admin/add-product",{admin:true})
       }
       //ddddddd
     });
