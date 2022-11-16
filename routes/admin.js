@@ -53,11 +53,27 @@ router.get("/add-product", function (req, res) {
   res.render("admin/add-product", { admin: true });
 });
 router.post("/add-product",(req,res)=>{
-  console.log(req.body)
-  console.log(req.files.image)
+  // console.log(req)
   
-  productHelper.addProduct(req.body,(result)=>{
-    res.render("admin/add-product")
+  
+  productHelper.addProduct(req.body, (result)=>{
+    let image=  req.files.image
+    productHelper.imageSaving(image,result,(err,done)=>{
+      if(err){
+        console.log(err)
+        
+      }
+      else{
+        res.send("product added")
+      }
+      //ddddddd
+    })
+    
+    console.log('admin-routes.....')
+
+    console.log("result:"+result.insertedId)
+    console.log('..........')
+    
   })
 
 })

@@ -1,4 +1,4 @@
-const async = require('hbs/lib/async')
+
 
 var mongoClient=require('mongodb').MongoClient
 
