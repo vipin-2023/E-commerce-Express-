@@ -13,13 +13,15 @@
 {{#if products}}
 
         <table class="table mt-4">
-            <thead class="bg-success">
+            <thead >
                 <tr>
                     <th scope="col">No</th>
                     <th scope="col">Title</th>
                     <th scope="col">Category</th>
                     <th scope="col">image</th>
                     <th scope="col">Price</th>
+                    <th scope="col"></th>
+                   
                 </tr>
             </thead>
             <tbody>
@@ -30,6 +32,10 @@
                     <td>{{this.Category}}</td>
                     <td><img style="width: 50px;height:50px" src="/product-images/{{this._id}}.{{this.type}}" alt=""></td>
                     <td>{{this.Price}}</td>
+                    <td>
+                    <a href="/admin/edit-product/{{this._id}}" class="btn btn-primary">Edit</a>
+                    <a href="/admin/delete-product/{{this._id}}" class="btn btn-danger" onclick="return confirm('Are you sure want to delete {{this.name}} ?')">Delete</a></td>
+                    
                 </tr>
                 {{/each}}
 

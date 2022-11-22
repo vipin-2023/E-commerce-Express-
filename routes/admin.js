@@ -6,7 +6,6 @@ var productHelper = require("../helpers/product-helpers");
 /* GET users listing. */
 router.get("/", function (req, res, next) {
   productHelper.getAllProducts().then((products) => {
-    console.log(products);
     res.render("admin/view-products", { products, admin: true });
   });
 });
@@ -19,17 +18,41 @@ router.post("/add-product", (req, res) => {
   productHelper.addProduct(req, (result) => {
     productHelper.imageSaving(req.files.image, result, (err, done) => {
       if (err) {
-        console.log(err);
       } else {
-        res.render("admin/add-product",{admin:true})
+        res.render("admin/add-product", { admin: true });
       }
       //ddddddd
     });
+  });
+});
+router.get("/delete-product/:id", (req, res) => {
+  let proId = req.params.id;
 
-    console.log("admin-routes.....");
+  productHelper.deleteProduct(proId).then((data) => {
+    res.redirect("/admin");
+  });
+});
+router.get("/edit-product/:id", (req, res) => {
+  productHelper.getProductDetails(req.params.id).then((data) => {
+    res.render("admin/edit-product", { data });
+  });
+});
+router.post("/edit-product/:id", (req, res) => {
+  console.log(" edit post method called");
 
-    console.log("result:" + result.insertedId);
-    console.log("..........");
+  productHelper.updateProduct(req.params.id, req.body).then((data) => {
+    if (req.files.image) {
+      productHelper.imageEditing(
+        req.files.image,
+        req.params.id,
+        (err, done) => {
+          res.redirect("/admin");
+          
+        }
+      );
+    } else {
+      res.redirect("/admin");
+    }
   });
 });
 

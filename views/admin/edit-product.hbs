@@ -1,0 +1,51 @@
+<section>
+    <div class="contaner m-5 ">
+        <div class="row justify-content-center">
+
+
+
+            <div class="col-md-6">
+
+
+                <h2 class="text-center">Edit Product</h2>
+                <form action="{{data._id}}" enctype="multipart/form-data" method="post">
+                    <div class="form-group">
+                        <label for="formGroupExampleInput">Name</label>
+                        <input type="text" name="Name" class="form-control" id="formGroupExampleInput"
+                            value="{{data.Name}}" placeholder="canon">
+                    </div>
+                    <div class="form-group">
+                        <label for="formGroupExampleInput">Category</label>
+                        <input type="text" name="Category" class="form-control" id="formGroupExampleInput"
+                            value="{{data.Category}}" placeholder="camara">
+                    </div>
+                    <div class="form-group">
+                        <label for="formGroupExampleInput">Price</label>
+                        <input type="number" name="Price" class="form-control" id="formGroupExampleInput"
+                            value="{{data.Price}}" placeholder="35,000">
+                    </div>
+                    <div class="form-group">
+                        <label for="formGroupExampleInput">Discription</label>
+                        <input type="text" name="Discription" class="form-control" id="formGroupExampleInput"
+                            value="{{data.Discription}}" placeholder="Write Discription">
+                    </div>
+
+                    <div class="form-group">
+
+                        <img src="/product-images/{{data._id}}.{{data.type}}" alt=""
+                            style="height: auto ; width: 100px; margin-bottom:10px" id="image-tag-selected">
+                        <input type="file" name="image" class="form-control-file" id="exampleFormControlFile1" onchange="viewImage(event)">
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-4 ml-0">Submit</button>
+            </div>
+            </form>
+
+        </div>
+    </div>
+</section>
+
+<script>
+    function viewImage(event){
+        document.getElementById('image-tag-selected').src=URL.createObjectURL(event.target.files[0])
+    }
+</script>
