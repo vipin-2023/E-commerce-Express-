@@ -6,6 +6,7 @@ var productHelper = require("../helpers/product-helpers");
 /* GET users listing. */
 router.get("/", function (req, res, next) {
   productHelper.getAllProducts().then((products) => {
+    console.log(products)
     res.render("admin/view-products", { products, admin: true });
   });
 });
