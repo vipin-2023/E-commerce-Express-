@@ -1,47 +1,76 @@
 <div class="container">
 
+  <section class="mt-5">
 
-    <section class="mt-5">
-        
+    <table class="table mt-4">
+      <thead>
+        <tr>
+          <th scope="col">S.No</th>
+          <th scope="col">Item</th>
+          <th scope="col">Title</th>
+          <th scope="col">Quantity</th>
+          <th scope="col">Price</th>
 
+          <th scope="col"></th>
 
+        </tr>
+      </thead>
+      {{#each data}}
+        <tbody>
 
-        <table class="table mt-4">
-            <thead >
-                <tr> <th scope="col">S.No</th>
-                    <th scope="col">Item</th>
-                    <th scope="col">Title</th>
-                    <th scope="col">Quantity</th>
-                     <th scope="col">Price</th>
-                 
-                    <th scope="col"></th>
-                   
-                </tr>
-            </thead>
-            {{#each data}}
-            <tbody>
-              
-                <tr>  <th scope="row">{{@index}}</th>
-                    <td><img style="width: 50px;height:50px" src="/product-images/{{this._id}}.{{this.type}}" alt=""></td>
-                   
-                    <td>{{this.Name}}</td>
-                    <td>
-                       <button  class="btn  bg-dark text-white ml-auto">-</button>
-                        1
-                        <button class="btn  bg-dark text-white ml-auto">+</button>
-                    </td>
-                   
-                    <td>{{this.Price}}</td>
-                    <td>
-                    
-                    <a href="#" class="btn btn-danger" onclick="return confirm('Are you sure want to delete iphon ?')">Delete</a></td>
-                    
-                </tr>
-               
+          <tr>
+            <th scope="row">{{@index}}</th>
+            <td><img
+                style="width: 50px;height:50px"
+                src="/product-images/{{this.cartItems._id}}.{{this.cartItems.type}}"
+                alt=""
+              /></td>
 
-            </tbody>
-             {{/each }}
-        </table>
-  
-    </section>
+            <td>{{this.cartItems.Name}}</td>
+            <td>
+              <button
+                type="button"
+                class="btn btn-success btn-xs mr-2"
+                onclick="changeQuantity('{{this._id}}'   ,'{{this.cartItems._id}}' ,-1) "
+              >-<span class="glyphicon glyphicon-plus"></span></button>
+
+              {{this.quantity}}
+
+              <button
+                type="button"
+                class="btn btn-success btn-xs ml-2"
+                onclick="changeQuantity('{{this._id}}'   ,'{{this.cartItems._id}}' ,1) "
+              >+<span class="glyphicon glyphicon-plus"></span></button>
+            </td>
+
+            <td>
+              <h4> ₹ {{this.cartItems.Price}}</h4>
+            </td>
+            <td>
+
+              <a href="#" class="btn text-danger">Remove</a>
+            </td>
+
+          </tr>
+
+        </tbody>
+      {{/each}}
+    </table>
+
+  </section>
 </div>
+<script>
+function changeQuantity(cartId, proId, Count) {
+ 
+  $.ajax( 
+    {
+      url: "/change-product-quantity",
+      data: { cart: cartId, product: proId, count: Count },
+      method: "post",
+      success: (response) => {
+        alert(response);
+      },
+    }
+  );
+}
+</script>

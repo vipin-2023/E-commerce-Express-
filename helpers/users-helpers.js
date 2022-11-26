@@ -3,6 +3,7 @@ var collection = require("../config/collections");
 const bcrypt = require("bcrypt");
 const { response } = require("express");
 const { ObjectId } = require("mongodb");
+const { use } = require("../routes/user");
 module.exports = {
   doSignup: (userData) => {
     return new Promise(async (resolve, reject) => {
@@ -62,6 +63,10 @@ module.exports = {
   },
 
   addToCart: (proId, userId) => {
+    let proObj = {
+      item: proId,
+      quantity: 1,
+    };
     return new Promise(async (resolve, reject) => {
       let userCart = await db
         .get()
@@ -69,32 +74,42 @@ module.exports = {
         .findOne({ user: ObjectId(userId) });
       console.log(userCart);
       if (userCart) {
-        console.log("Old user");
-        db.get()
-          .collection(collection.CART_COLLECTION)
-          .updateOne(
-            { user: ObjectId(userId) },
-            {
-              $addToSet: {
-                products: proId,
-              },
-            }
-          )
-          .then((data) => {
-            console.log(data);
-            resolve(data.acknowledged);
-          });
+        let proExist = userCart.products.findIndex(
+          (product) => product.item === proId
+        );
+        if (proExist == -1) {
+          db.get()
+            .collection(collection.CART_COLLECTION)
+            .updateOne(
+              { user: ObjectId(userId) },
+              {
+                $addToSet: {
+                  products: proObj,
+                },
+              }
+            )
+            .then((data) => {
+              console.log(data);
+              data.newFieldAdded = true;
+
+              resolve(data);
+            });
+
+
+          
+        } 
       } else {
         console.log("New user cart");
         let cartObj = {
           user: ObjectId(userId),
-          products: [proId],
+          products: [proObj],
         };
         db.get()
           .collection(collection.CART_COLLECTION)
           .insertOne(cartObj)
-          .then((response) => {
-            resolve(response);
+          .then((data) => {
+            data.newFieldAdded = true;
+            resolve(data);
           });
       }
     });
@@ -112,10 +127,16 @@ module.exports = {
 
           { $unwind: "$products" },
           {
+            $project: {
+              item: "$products.item",
+              quantity: "$products.quantity",
+            },
+          },
+          {
             $addFields: {
               proId: {
                 $convert: {
-                  input: "$products",
+                  input: "$item",
                   to: "objectId",
                 },
               },
@@ -131,25 +152,53 @@ module.exports = {
               as: "cartItems",
             },
           },
-          {
-            $project: {
-              _id: 0,
-              user: 0,
-              products: 0,
-            
-            },
-          },
+         
+          { $unwind: "$cartItems" },
         ])
         .toArray();
-        var newArray=[]
-        var data = cartItems.map((inside)=>{
-          newArray.push(inside.cartItems[0])
-         
-          
-          
-        })
-       
-      resolve(newArray);
+      var newArray = [];
+      cartItems.map((inside) => {
+        console.log(inside);
+
+        newArray.push(inside.cartItems);
+      });
+
+      resolve(cartItems);
+    });
+  },
+
+  getCartCount: (userId) => {
+    return new Promise(async (resolve, reject) => {
+      let count = 0;
+      let cart = await db
+        .get()
+        .collection(collection.CART_COLLECTION)
+        .findOne({ user: ObjectId(userId) });
+      if (cart) {
+        count = cart.products.length;
+      }
+      resolve(count);
+    });
+  },
+  changeProductQuantity: (quantityObj) => {
+    //quantityObj has 3 value from cart.hbs ajax script
+    return new Promise((resolve, reject) => {
+      
+      db.get()
+        .collection(collection.CART_COLLECTION)
+        .updateOne(
+          {
+            _id:ObjectId(quantityObj.cart),"products.item": quantityObj.product,
+          },
+          {
+            $inc: { "products.$.quantity": parseInt(quantityObj.count) },
+          }
+        )
+        .then((data) => {
+          console.log(data);
+          data.newFieldAdded = false;
+          resolve(data);
+        });
     });
   },
 };

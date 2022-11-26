@@ -1,5 +1,6 @@
 const { response } = require("express");
 var express = require("express");
+const { ObjectId } = require("mongodb");
 var router = express.Router();
 var productHelper = require("../helpers/product-helpers");
 var usersHelper = require("../helpers/users-helpers");
@@ -14,12 +15,15 @@ const verifyLogin = (req, res, next) => {
 };
 
 /* GET home page. */
-router.get("/", function (req, res, next) {
+router.get("/", async function (req, res, next) {
   let user = req.session.user;
-  console.log(`user from ${user}`);
+  
+  let cartCount = null;
+  if (req.session.user) {
+    cartCount = await usersHelper.getCartCount(req.session.user._id);
+  }
   productHelper.getAllProducts().then((products) => {
-   
-    res.render("user/view-products", { products, user });
+    res.render("user/view-products", { products, user, cartCount });
   });
 });
 router.get("/login", (req, res) => {
@@ -46,7 +50,7 @@ router.get("/signup", (req, res) => {
   if (req.session.loggedIn) {
     res.redirect("/");
   } else {
-    res.render("user/signup",{ signUpErr: req.session.signUpErr });
+    res.render("user/signup", { signUpErr: req.session.signUpErr });
     req.session.signUpErr = false;
   }
 });
@@ -54,16 +58,14 @@ router.post("/signup", (req, res) => {
   usersHelper.doSignup(req.body).then((response) => {
     if (response) {
       req.session.loggedIn = true;
-      console.log(response.name);
+    
       req.session.user = response;
       res.redirect("/");
     } else {
       req.session.signUpErr = true;
-      res.redirect("/signup")
+      res.redirect("/signup");
     }
-    //  req.session.loggedIn=true
-    //  console.log(req.body)
-    //  req.session.user=response
+   
   });
 });
 
@@ -73,23 +75,29 @@ router.get("/logout", (req, res) => {
 });
 
 router.get("/cart", verifyLogin, (req, res) => {
-  usersHelper.getAllCart(req.session.user._id).then((data)=>{
+  usersHelper.getAllCart(req.session.user._id).then((data) => {
     let user = req.session.user;
-   
     console.log(data)
-
-    res.render("user/cart",{data,user});
-  })
- 
-});
-router.get('/add-to-cart/:id',verifyLogin,(req,res)=>{
-  console.log(req.session.user._id)
-  console.log(req.params.id)
-  usersHelper.addToCart(req.params.id,req.session.user._id).then((data)=>{
    
-    res.redirect('/')
-  })
 
+    res.render("user/cart", { data, user });
+  });
+});
+router.get("/add-to-cart/:id", (req, res) => {
+  usersHelper.addToCart(req.params.id, req.session.user._id).then((data) => {
+  
+    if (!data.newFieldAdded) {
+      res.json({ status: false });
+    } else if (data.newFieldAdded) {
+      res.json({ status: true });
+    }
+  });
+});
+router.post("/change-product-quantity",(req,res,next)=>{
+  console.log(req.body)
+  usersHelper.changeProductQuantity(req.body).then(()=>{
+
+  })
 })
 
 
