@@ -94,10 +94,7 @@ module.exports = {
 
               resolve(data);
             });
-
-
-          
-        } 
+        }
       } else {
         console.log("New user cart");
         let cartObj = {
@@ -116,7 +113,7 @@ module.exports = {
   },
   getAllCart: (userId) => {
     return new Promise(async (resolve, reject) => {
-      console.log(userId);
+     
       let cartItems = await db
         .get()
         .collection(collection.CART_COLLECTION)
@@ -152,13 +149,13 @@ module.exports = {
               as: "cartItems",
             },
           },
-         
+
           { $unwind: "$cartItems" },
         ])
         .toArray();
       var newArray = [];
       cartItems.map((inside) => {
-        console.log(inside);
+        
 
         newArray.push(inside.cartItems);
       });
@@ -179,26 +176,55 @@ module.exports = {
       }
       resolve(count);
     });
+  }, 
+  removeProduct: (prodId,cartId) => {
+    console.log(prodId)
+    console.log(cartId)
+    return new Promise((resolve, reject) => {
+      db.get()
+            .collection(collection.CART_COLLECTION)
+            .updateOne(
+              { _id: ObjectId(cartId) },
+              {
+                $pull:{products:{item:prodId}}
+              }
+            )
+            .then((data) => {
+          
+              
+
+              resolve(data);
+            });
+    });
   },
   changeProductQuantity: (quantityObj) => {
-    //quantityObj has 3 value from cart.hbs ajax script
+    //quantityObj has 4 value from cart.hbs ajax script
+
+    quantityObj.quantity = parseInt(quantityObj.quantity);
+
+    
+
     return new Promise((resolve, reject) => {
-      
-      db.get()
-        .collection(collection.CART_COLLECTION)
-        .updateOne(
-          {
-            _id:ObjectId(quantityObj.cart),"products.item": quantityObj.product,
-          },
-          {
-            $inc: { "products.$.quantity": parseInt(quantityObj.count) },
-          }
-        )
-        .then((data) => {
-          console.log(data);
-          data.newFieldAdded = false;
-          resolve(data);
-        });
+      if (quantityObj.quantity == 1 && quantityObj.count == -1) {
+        console.log('qty :1 and count:-1')
+        
+      }else{
+        db.get()
+          .collection(collection.CART_COLLECTION)
+          .updateOne(
+            {
+              _id: ObjectId(quantityObj.cart),
+              "products.item": quantityObj.product,
+            },
+            {
+              $inc: { "products.$.quantity": parseInt(quantityObj.count) },
+            }
+          )
+          .then((data) => {
+            resolve(data);
+          });
+
+      }
     });
   },
 };

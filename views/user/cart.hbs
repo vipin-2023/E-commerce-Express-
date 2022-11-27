@@ -1,76 +1,49 @@
 <div class="container">
 
-  <section class="mt-5">
+    <section class="mt-5">
 
-    <table class="table mt-4">
-      <thead>
-        <tr>
-          <th scope="col">S.No</th>
-          <th scope="col">Item</th>
-          <th scope="col">Title</th>
-          <th scope="col">Quantity</th>
-          <th scope="col">Price</th>
+        <table class="table mt-4">
+            <thead>
+                <tr>
+                    <th scope="col">S.No</th>
+                    <th scope="col">Item</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Price</th>
 
-          <th scope="col"></th>
+                    <th scope="col"></th>
 
-        </tr>
-      </thead>
-      {{#each data}}
-        <tbody>
+                </tr>
+            </thead>
+            {{#each data}}
+            <tbody>
 
-          <tr>
-            <th scope="row">{{@index}}</th>
-            <td><img
-                style="width: 50px;height:50px"
-                src="/product-images/{{this.cartItems._id}}.{{this.cartItems.type}}"
-                alt=""
-              /></td>
+                <tr>
+                    <th scope="row">{{@index}}</th>
+                    <td><img style="width: 50px;height:50px"
+                            src="/product-images/{{this.cartItems._id}}.{{this.cartItems.type}}" alt="" /></td>
 
-            <td>{{this.cartItems.Name}}</td>
-            <td>
-              <button
-                type="button"
-                class="btn btn-success btn-xs mr-2"
-                onclick="changeQuantity('{{this._id}}'   ,'{{this.cartItems._id}}' ,-1) "
-              >-<span class="glyphicon glyphicon-plus"></span></button>
+                    <td>{{this.cartItems.Name}}</td>
+                    <td>
+                        <button onclick="changeQuantity('{{this._id}}','{{this.cartItems._id}}' ,-1,'{{this.cartItems.Price}}')"  class="btn btn-success btn-xs mr-2" >-</button>
+                        <span id="{{this.cartItems._id}}">{{this.quantity}}</span>
+                        <button  onclick="changeQuantity('{{this._id}}','{{this.cartItems._id}}' ,1,'{{this.cartItems.Price}}')" class="btn btn-success btn-xs ml-2" >+</span>
+                        </button>
+                    </td>
 
-              {{this.quantity}}
+                    <td>
+                        <h4 > <span> ₹ </span> <span class="{{this.cartItems._id}}" >{{this.cartItems.Price}}</span> </h4>
+                    </td>
+                    <td>
 
-              <button
-                type="button"
-                class="btn btn-success btn-xs ml-2"
-                onclick="changeQuantity('{{this._id}}'   ,'{{this.cartItems._id}}' ,1) "
-              >+<span class="glyphicon glyphicon-plus"></span></button>
-            </td>
+                        <a href="/remove-product/{{this.cartItems._id}}/{{this._id}}" onclick="return confirm('Are you sure want to remove {{this.cartItems.Name}} from Cart ?')" class="btn text-danger">Remove</a>
+                    </td>
 
-            <td>
-              <h4> ₹ {{this.cartItems.Price}}</h4>
-            </td>
-            <td>
+                </tr>
 
-              <a href="#" class="btn text-danger">Remove</a>
-            </td>
+            </tbody>
+            {{/each}}
+        </table>
 
-          </tr>
-
-        </tbody>
-      {{/each}}
-    </table>
-
-  </section>
+    </section>
 </div>
-<script>
-function changeQuantity(cartId, proId, Count) {
- 
-  $.ajax( 
-    {
-      url: "/change-product-quantity",
-      data: { cart: cartId, product: proId, count: Count },
-      method: "post",
-      success: (response) => {
-        alert(response);
-      },
-    }
-  );
-}
-</script>

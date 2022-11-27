@@ -75,9 +75,10 @@ router.get("/logout", (req, res) => {
 });
 
 router.get("/cart", verifyLogin, (req, res) => {
+  
   usersHelper.getAllCart(req.session.user._id).then((data) => {
     let user = req.session.user;
-    console.log(data)
+
    
 
     res.render("user/cart", { data, user });
@@ -94,11 +95,25 @@ router.get("/add-to-cart/:id", (req, res) => {
   });
 });
 router.post("/change-product-quantity",(req,res,next)=>{
-  console.log(req.body)
-  usersHelper.changeProductQuantity(req.body).then(()=>{
+ 
+  usersHelper.changeProductQuantity(req.body).then((data)=>{
+   
+    
+    res.json(data)
 
   })
 })
+
+router.get("/remove-product/:proid/:cartid", (req, res) => {
+  let proId = req.params.proid;
+  let cartId = req.params.cartid;
+
+  usersHelper.removeProduct(proId,cartId).then((data) => {
+    console.log("final result...from cart")
+    console.log(data)
+    res.redirect("/cart");
+  });
+});
 
 
 module.exports = router;
