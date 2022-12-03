@@ -1,0 +1,59 @@
+<div class="container mt-5" style="display: flex;gap:10%; max-width: 55%;">
+    <form action="" id="checkout-form" style="width: 100%;">
+        <div class="row">
+            
+
+      
+        <div class="left  col-lg-8" style="flex: 5;">
+
+            <h1>Enter Delivery Details</h1>
+            <div class="form-group">
+                <label for="">Address</label>
+                <input required type="text" name="address" id="address" class="form-control" placeholder="address" />
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">Pincode</label>
+                <input required type="text" name="pincode" id="pincode" class="form-control" placeholder="pincode" />
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">Mobile</label>
+                <input required type="number" name="mobile" id="mobile" class="form-control" placeholder="mobile" />
+            </div>
+        
+            <input type="text" name="userId" id="" value="{{user._id}}" hidden />
+            
+
+
+
+        </div>
+        <div class="right  col-lg-4" style="flex: 2;">
+            <div class="container card p-3" style="gap:10px;">
+                <h4>Total Amount</h4>
+                {{#each total}}
+                <h2 style="margin: auto;">₹ {{this.total}} </h2>
+                {{/each}}
+
+                <h4 style="opacity: .6;">Payment method</h4>
+                <div class="form-check">
+
+                    <label class="form-check-label">
+                        <input class="form-check-input" type="radio" name="payment-method" value="COD" checked />
+                        COD
+                    </label>
+                </div>
+                <div class="form-check">
+
+                    <label class="form-check-label" for="exampleRadios2">
+                        <input class="form-check-input" type="radio" name="payment-method" value="ONLINE" />
+                        ONLINE
+
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-5">Check Out</button>
+            </div>
+
+        </div>
+          </div>
+    </form>
+</div>

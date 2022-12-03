@@ -15,6 +15,19 @@ function addToCart(proId) {
   });
 }
 
+$("#checkout-form").submit((e) => {
+  e.preventDefault();
+  console.log("checkout......");
+  $.ajax({
+    url: "/place-order",
+    method: "post",
+    data: $("#checkout-form").serialize(),
+    success: (response) => {
+      alert(response);
+    },
+  });
+});
+
 function changeQuantity(cartId, proId, count, price) {
   console.log("ajax called....");
   var quantity = parseInt(document.getElementById(proId).innerHTML);
@@ -39,6 +52,12 @@ function changeQuantity(cartId, proId, count, price) {
 
       var collection = document.getElementsByClassName(proId);
       collection[0].innerHTML = inTotalQty;
+      let total = $("#total").html();
+      if (count === 1) {
+        document.getElementById("total").innerHTML = parseInt(total) + newPrice;
+      } else if (count === -1) {
+        document.getElementById("total").innerHTML = parseInt(total) - newPrice;
+      }
     },
   });
 }

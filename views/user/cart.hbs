@@ -1,11 +1,26 @@
-<div class="container">
+<div class="container" style="max-width: 55%;">
 
     <section class="mt-5">
 
         <table class="table mt-4">
+            {{#unless total}}
+            <div class="container h-100 align-item-center align-item-center">
+                <div class="row d-flex justify-content-center">
+                    <img style="width: 100px;height:100px" src="/images/nothing.PNG" alt="">
+
+
+
+                </div>
+
+            </div>
+
+
+            {{/unless}}
+            {{#if total}}
+
             <thead>
                 <tr>
-                    <th scope="col">S.No</th>
+
                     <th scope="col">Item</th>
                     <th scope="col">Title</th>
                     <th scope="col">Quantity</th>
@@ -15,28 +30,36 @@
 
                 </tr>
             </thead>
+            {{/if }}
             {{#each data}}
+
             <tbody>
 
                 <tr>
-                    <th scope="row">{{@index}}</th>
+
                     <td><img style="width: 50px;height:50px"
                             src="/product-images/{{this.cartItems._id}}.{{this.cartItems.type}}" alt="" /></td>
 
                     <td>{{this.cartItems.Name}}</td>
                     <td>
-                        <button onclick="changeQuantity('{{this._id}}','{{this.cartItems._id}}' ,-1,'{{this.cartItems.Price}}')"  class="btn btn-success btn-xs mr-2" >-</button>
+                        <button
+                            onclick="changeQuantity('{{this._id}}','{{this.cartItems._id}}' ,-1,'{{this.cartItems.Price}}')"
+                            class="btn btn-info btn-xs mr-2">-</button>
                         <span id="{{this.cartItems._id}}">{{this.quantity}}</span>
-                        <button  onclick="changeQuantity('{{this._id}}','{{this.cartItems._id}}' ,1,'{{this.cartItems.Price}}')" class="btn btn-success btn-xs ml-2" >+</span>
+                        <button
+                            onclick="changeQuantity('{{this._id}}','{{this.cartItems._id}}' ,1,'{{this.cartItems.Price}}')"
+                            class="btn btn-info btn-xs ml-2">+</span>
                         </button>
                     </td>
 
                     <td>
-                        <h4 > <span> ₹ </span> <span class="{{this.cartItems._id}}" >{{this.cartItems.Price}}</span> </h4>
+                        <h4> <span> ₹ </span> <span class="{{this.cartItems._id}}">{{this.cartItems.Price}}</span> </h4>
                     </td>
                     <td>
 
-                        <a href="/remove-product/{{this.cartItems._id}}/{{this._id}}" onclick="return confirm('Are you sure want to remove {{this.cartItems.Name}} from Cart ?')" class="btn text-danger">Remove</a>
+                        <a href="/remove-product/{{this.cartItems._id}}/{{this._id}}"
+                            onclick="return confirm('Are you sure want to remove {{this.cartItems.Name}} from Cart ?')"
+                            class="btn text-danger">Remove</a>
                     </td>
 
                 </tr>
@@ -44,6 +67,22 @@
             </tbody>
             {{/each}}
         </table>
+        {{#if total}}
+        <hr class="mt-6">
+        <div class="column float-right mr-3" style="display:flex;flex-direction:column;width :max-content">
+            <div class="row float-right mr-4 mt-5">
+                <h2 style="opacity: .6;">Total : </h2>
+                {{#each total}}
+                <h2> ₹ <span id="total"> {{this.total}}</span></h2>
+                {{/each }}
+
+            </div>
+            <a href="/place-order" class="float-right mr-4 mt-5 btn btn-success btn-xs ml-2 p-3">Place Order</a>
+
+        </div>
+        {{/if}}
+
+
 
     </section>
 </div>

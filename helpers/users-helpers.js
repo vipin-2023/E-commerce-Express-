@@ -111,9 +111,43 @@ module.exports = {
       }
     });
   },
+  placeOrder:(order,products,total)=>{
+    return new Promise((resolve,reject)=>{
+      console.log(" ......")
+      console.log(order,products,total)
+      let status = order['payment-method']==="COD"?"placed":'pending'
+      let orderObj={
+        deliveryDetails:{
+          mobile:order.mobile,
+          address:order.address,
+          pincode:order.pincode
+        },
+        userId:ObjectId(order.userId),
+        paymentMethod:order['payment-method'],
+        products:products,
+        totalAmount:total,
+        status:status,
+        date:new Date()
+      }
+      db.get().collection(collection.ORDER_COLLECTION).insertOne(orderObj).then((response)=>{ 
+        db.get().collection(collection.CART_COLLECTION).deleteOne({user:ObjectId(order.userId)})
+        resolve()
+      })
+    })
+
+
+  },
+  getCartProductList:(userId)=>{
+    return new Promise(async (resolve,reject)=>{
+      let cart = await db.get().collection(collection.CART_COLLECTION).findOne({
+        user:ObjectId(userId)
+      })
+      resolve(cart)
+    })
+
+  },
   getAllCart: (userId) => {
     return new Promise(async (resolve, reject) => {
-     
       let cartItems = await db
         .get()
         .collection(collection.CART_COLLECTION)
@@ -155,8 +189,6 @@ module.exports = {
         .toArray();
       var newArray = [];
       cartItems.map((inside) => {
-        
-
         newArray.push(inside.cartItems);
       });
 
@@ -176,25 +208,88 @@ module.exports = {
       }
       resolve(count);
     });
-  }, 
-  removeProduct: (prodId,cartId) => {
-    console.log(prodId)
-    console.log(cartId)
+  },
+  removeProduct: (prodId, cartId) => {
+    console.log(prodId);
+    console.log(cartId);
     return new Promise((resolve, reject) => {
       db.get()
-            .collection(collection.CART_COLLECTION)
-            .updateOne(
-              { _id: ObjectId(cartId) },
-              {
-                $pull:{products:{item:prodId}}
-              }
-            )
-            .then((data) => {
-          
-              
+        .collection(collection.CART_COLLECTION)
+        .updateOne(
+          { _id: ObjectId(cartId) },
+          {
+            $pull: { products: { item: prodId } },
+          }
+        )
+        .then((data) => {
+          resolve(data);
+        });
+    });
+  },
+  getTotalAmount: (userId) => {
+    return new Promise(async (resolve, reject) => {
+      let cartItems = await db
+        .get()
+        .collection(collection.CART_COLLECTION)
+        .aggregate([
+          {
+            $match: { user: ObjectId(userId) },
+          },
 
-              resolve(data);
-            });
+          { $unwind: "$products" },
+          {
+            $project: {
+              item: "$products.item",
+              quantity: "$products.quantity",
+            },
+          },
+          {
+            $addFields: {
+              proId: {
+                $convert: {
+                  input: "$item",
+                  to: "objectId",
+                },
+              },
+            },
+          },
+
+          {
+            $lookup: {
+              from: collection.PRODUCT_COLLECTION,
+
+              localField: "proId",
+              foreignField: "_id",
+              as: "cartItems",
+            },
+          },
+
+          { $unwind: "$cartItems" },
+
+          {
+            $group: {
+              _id:"$cartItems._id",
+              total: {
+                $sum: { $multiply: ["$quantity", {$toInt:"$cartItems.Price"}] },
+              },
+            },
+          },
+          {
+            $group: {
+              _id:"$cartItems._id",
+              total: {
+                $sum: "$total" ,
+              },
+            },
+          },
+        ])
+        .toArray();
+      var newArray = [];
+      cartItems.map((inside) => {
+        newArray.push(inside.cartItems);
+      });
+
+      resolve(cartItems);
     });
   },
   changeProductQuantity: (quantityObj) => {
@@ -202,13 +297,10 @@ module.exports = {
 
     quantityObj.quantity = parseInt(quantityObj.quantity);
 
-    
-
     return new Promise((resolve, reject) => {
       if (quantityObj.quantity == 1 && quantityObj.count == -1) {
-        console.log('qty :1 and count:-1')
-        
-      }else{
+        console.log("qty :1 and count:-1");
+      } else {
         db.get()
           .collection(collection.CART_COLLECTION)
           .updateOne(
@@ -223,7 +315,6 @@ module.exports = {
           .then((data) => {
             resolve(data);
           });
-
       }
     });
   },
