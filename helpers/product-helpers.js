@@ -5,6 +5,7 @@ module.exports = {
   addProduct: (request, callback) => {
     let product = request.body;
     var type = request.files.image.mimetype.split("/");
+    product.Price=product.Price
 
     product.type = type[1];
 
@@ -39,6 +40,9 @@ module.exports = {
   },
   updateProduct: (prodId, prodDetails) => {
     return new Promise((resolve, reject) => {
+ 
+ 
+
       db.get()
         .collection(collection.PRODUCT_COLLECTION)
         .updateOne(
@@ -53,7 +57,7 @@ module.exports = {
           }
         )
         .then((data) => {
-          console.log(".............")
+          console.log("....updateProduct.........")
           console.log(data)
           resolve(data);
         });

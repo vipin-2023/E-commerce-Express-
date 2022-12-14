@@ -1,0 +1,47 @@
+<div class="container" style="max-width: 55%;">
+
+
+    <section class="mt-5">
+        
+
+
+        {{#if orders}}
+
+        <table class="table mt-4">
+            <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Pincode</th>
+                    <th scope="col">Mobile</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Method</th>
+                     <th scope="col">Status</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {{#each orders}}
+                
+                <tr>
+                   
+                    <th >{{this.date}}</th>
+                    <th >{{this.deliveryDetails.address}}</th>
+                    <th >{{this.deliveryDetails.pincode}}</th>
+                    <th >{{this.deliveryDetails.mobile}}</th>
+                    <th >{{this.totalAmount.total}}</th>
+                    <th >{{this.paymentMethod}}</th>
+                    <th >{{this.status}}</th>
+                   
+                   
+
+                </tr>
+                {{/each}}
+
+            </tbody>
+           
+        </table>
+        <a href="/" class="btn btn-primary ml-auto">Home</a>
+        {{/if}}
+    </section>
+</div>

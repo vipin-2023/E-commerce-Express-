@@ -1,12 +1,8 @@
-<section>
-    <div class="contaner m-5 "  style="max-width: 55%;">
+
+    <div class="container pt-5 "  style="max-width: 55%;">
+        <section  >
         <div class="row justify-content-center">
-
-
-
             <div class="col-md-6">
-
-
                 <h2 class="text-center">Edit Product</h2>
                 <form action="{{data._id}}" enctype="multipart/form-data" method="post">
                     <div class="form-group">
@@ -41,11 +37,7 @@
             </form>
 
         </div>
+        </section>
     </div>
-</section>
 
-<script>
-    function viewImage(event){
-        document.getElementById('image-tag-selected').src=URL.createObjectURL(event.target.files[0])
-    }
-</script>
+

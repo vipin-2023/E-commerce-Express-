@@ -18,7 +18,6 @@ const verifyLogin = (req, res, next) => {
 /* GET home page. */
 router.get("/", async function (req, res, next) {
   let user = req.session.user;
-
   let cartCount = null;
 
   if (req.session.user) {
@@ -77,9 +76,11 @@ router.get("/logout", (req, res) => {
 });
 
 router.get("/cart", verifyLogin, async (req, res) => {
+  console.log('first......')
   let data = await usersHelper.getAllCart(req.session.user._id);
+  console.log('second......')
   let total = await usersHelper.getTotalAmount(req.session.user._id);
-
+  console.log('3rd......')
   let user = req.session.user;
 
   res.render("user/cart", { data, user, total });
@@ -110,25 +111,76 @@ router.get("/remove-product/:proid/:cartid", (req, res) => {
     res.redirect("/cart");
   });
 });
+
 router.get("/place-order", verifyLogin, async (req, res) => {
+  console.log("......place-order.........")
   console.log(req.session.user);
   let user = req.session.user;
+  console.log("......place-order(req.body).........")
   console.log(req.body)
   let total = await usersHelper.getTotalAmount(user._id);
+  console.log("......place-order(total).........")
   console.log(total)
 
   res.render("user/order-details", { total, user });
 });
+//post method for placing order
 router.post("/place-order", async (req, res) => {
-  let products = await usersHelpers.getCartProductList(req.body.userId);
-  let totalPrice = await usersHelpers.getTotalAmount(req.body.userId);
+  try {
+    var products = await usersHelpers.getCartProductList(req.body.userId);
+    var totalPrice = await usersHelpers.getTotalAmount(req.body.userId);
+    var price = totalPrice[0].total
+  }
+  catch (err) {
 
-  usersHelpers.placeOrder(req.body, products, totalPrice).then((response) => {
-    
-    console.log(".......response post");
-    res.json({status:true})
-    
+  }
+  usersHelpers.placeOrder(req.body, products, totalPrice[0]).then((orderId) => {
+    if (req.body['payment-method'] == 'COD') {
+      res.json({ codSuccess: true })
+
+    } else {
+      usersHelpers.generateRazorpay(orderId, price).then((response) => {
+        
+        console.log('... GENERATERAZORPAY response...')
+
+        console.log(response)
+        res.json(response)
+       
+      }).catch((err) => {
+        console.log('ERROR..............')
+      })
+    }
   });
 });
 
+//order success routes for displaying message
+router.get('/order-success', (req, res) => {
+  console.log('checkout .........')
+  res.render('user/order-success', { user: req.session.user })
+})
+//live orders 
+router.get('/orders', async (req, res) => {
+  let orders = await usersHelpers.getUserOrders(req.session.user._id)
+  res.render('user/orders', { user: req.session.user, orders })
+})
+router.get('/view-order-products/:id', async (req, res) => {
+  let products = await usersHelpers.getOrderProducts(req.params.id)
+  res.render('user/view-order-products', { user: req.session.user, products })
+
+})
+router.post('/verify-payment', (req, res) => {
+  console.log('.........req.body .........')
+  console.log(req.body)
+  
+  usersHelpers.verifyPayment(req.body).then(()=>{
+    usersHelpers.changePaymentStatus(req.body['order[receipt]']).then(()=>{
+      res.json({isSuccess:true})
+    }).catch((err)=>{
+      console.log(err)
+      res.json({isSuccess:false});
+    })
+
+  })
+  
+})
 module.exports = router;
