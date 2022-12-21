@@ -9,7 +9,12 @@ var usersHelper = require("../helpers/users-helpers");
 // middleWare
 const verifyLogin = (req, res, next) => {
   if (req.session.loggedIn) {
-    next();
+    if(req.session.user.isAdmin){
+      res.redirect('/admin')
+    }else{
+      next();
+    }
+   
   } else {
     res.redirect("/login");
   }
@@ -19,14 +24,23 @@ const verifyLogin = (req, res, next) => {
 router.get("/", async function (req, res, next) {
   let user = req.session.user;
   let cartCount = null;
+  console.log(req.session.user)
+  if(  req.session.user == undefined || !req.session.user.isAdmin){
 
+  
   if (req.session.user) {
     cartCount = await usersHelper.getCartCount(req.session.user._id);
   }
 
   productHelper.getAllProducts().then((products) => {
     res.render("user/view-products", { products, user, cartCount });
-  });
+  });}else{
+    productHelper.getAllProducts().then((products) => {
+     
+      res.render("admin/view-products", { products,user, admin: true });
+    });
+
+  }
 });
 router.get("/login", (req, res) => {
   if (req.session.loggedIn) {
@@ -86,7 +100,7 @@ router.get("/cart", verifyLogin, async (req, res) => {
   res.render("user/cart", { data, user, total });
 });
 
-router.get("/add-to-cart/:id", (req, res) => {
+router.get("/add-to-cart/:id",verifyLogin, (req, res) => {
   usersHelper.addToCart(req.params.id, req.session.user._id).then((data) => {
     if (!data.newFieldAdded) {
       res.json({ status: false });

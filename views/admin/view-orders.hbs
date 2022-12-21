@@ -1,0 +1,60 @@
+<div class="container" style="max-width: 55%;">
+
+
+    <section class="mt-5">
+        {{#unless allOrders}}
+            <div class="container h-100 align-item-center align-item-center">
+                <div class="row d-flex justify-content-center">
+                    <img style="width: 100px;height:100px" src="/images/nothing.PNG" alt="">
+
+
+
+                </div>
+
+            </div>
+
+
+            {{/unless}}
+        
+
+
+        {{#if allOrders}}
+
+        <table class="table mt-4">
+            <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Pincode</th>
+                    <th scope="col">Mobile</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Method</th>
+                     <th scope="col">Status</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {{#each allOrders}}
+                
+                <tr>
+                   
+                    <th >{{this.date}}</th>
+                    <th >{{this.deliveryDetails.address}}</th>
+                    <th >{{this.deliveryDetails.pincode}}</th>
+                    <th >{{this.deliveryDetails.mobile}}</th>
+                    <th >{{this.totalAmount.total}}</th>
+                    <th >{{this.paymentMethod}}</th>
+                    <th >{{this.status}}</th>
+                   
+                   
+
+                </tr>
+                {{/each}}
+
+            </tbody>
+           
+        </table>
+       
+        {{/if}}
+    </section>
+</div>

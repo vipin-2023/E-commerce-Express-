@@ -1,0 +1,48 @@
+<div class="container" style="max-width: 55%;">
+
+
+    <section class="mt-5">
+        {{#unless allUsers}}
+            <div class="container h-100 align-item-center align-item-center">
+                <div class="row d-flex justify-content-center">
+                    <img style="width: 100px;height:100px" src="/images/nothing.PNG" alt="">
+
+
+
+                </div>
+
+            </div>
+
+
+            {{/unless}}
+        
+
+
+        {{#if allUsers}}
+
+        <table class="table mt-4">
+            <thead>
+                <tr>
+                    <th scope="col">No</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                   
+
+                </tr>
+            </thead>
+            <tbody>
+                {{#each allUsers}}
+                <tr>
+                    <th scope="row">{{inc @index}}</th>
+                    <td>{{this.name}}</td>
+                    <td>{{this.email}}</td>
+                    
+
+                </tr>
+                {{/each}}
+
+            </tbody>
+        </table>
+        {{/if}}
+    </section>
+</div>
