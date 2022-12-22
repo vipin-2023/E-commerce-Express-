@@ -3,41 +3,28 @@
 
     <div class="row justify-content-center">
       {{#each products}}
-        <div class="col-md-3 p-3 m-3">
+      <div class="col-md-3 p-3 m-3">
 
-          <div
-            class="card"
-            style="width: 18rem;min-height:25rem; justify-content: space-between; "
-          >
-            <img
-              class="card-img-top"
-              style=" max-height:14rem "
-              src="/product-images/{{this._id}}.{{this.type}}"
-              alt="Card image cap"
-            />
-            <div class="card-body pb-0">
-              <h5 class="card-title">{{this.Name}}</h5>
-              <p class="card-text">{{this.Discription}}</p>
+        <div class="card" style="width: 18rem;min-height:25rem; justify-content: space-between; ">
+          <img class="card-img-top" style=" max-height:14rem " src="/product-images/{{this._id}}.{{this.type}}"
+            alt="Card image cap" />
+          <div class="card-body pb-0">
+            <h5 class="card-title">{{this.Name}}</h5>
+            <p class="card-text">{{this.Discription}}</p>
 
-              <div
-                class="row p-2"
-                style="justify-content: space-between; align-items: center;"
-              >
+            <div class="row p-2" style="justify-content: space-between; align-items: center;">
 
-                <p class="card-text" style="font-size:1.3rem; font-weight:500;">
-                  ₹
-                  {{this.Price}}</p>
+              <p class="card-text" style="font-size:1.3rem; font-weight:500;">
+                ₹
+                {{this.Price}}</p>
 
-                <button
-                  onclick="addToCart('{{this._id}}')"
-                  class="btn btn-primary"
-                >Add Cart</button>
-
-              </div>
+              <button onclick="addToCart('{{this._id}}')" class="btn btn-primary">Add Cart</button>
 
             </div>
+
           </div>
         </div>
+      </div>
       {{/each}}
 
     </div>
